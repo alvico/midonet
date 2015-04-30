@@ -29,9 +29,16 @@ sudo apt-get install curl screen tmux python-dev libncurses5-dev openjdk-7-jdk -
 sudo apt-get install iproute -y
 
 # add midokura apt source
-sudo bash -c "echo deb http://repo.midonet.org/midonet/current unstable main >   /etc/apt/sources.list.d/midokura.list"
-sudo bash -c "echo deb http://repo.midonet.org/misc stable main >> /etc/apt/sources.list.d/midokura.list"
-curl -k http://repo.midonet.org/packages.midokura.key | sudo apt-key add -
+if [ $1 == "--gates" ]; then
+    echo running as gate pulling from artifactory
+    sudo bash -c "echo deb http://bcn4.bcn.midokura.com:8081/artifactory/midonet nightly main >   /etc/apt/sources.list.d/midokura.list"
+    curl -k http://bcn4.bcn.midokura.com:8081/artifactory/api/gpg/key/public | sudo apt-key add -
+else
+    sudo bash -c "echo deb http://repo.midonet.org/midonet/current unstable main > /etc/apt/sources.list.d/midokura.list"
+    sudo bash -c "echo deb http://repo.midonet.org/misc stable main >> /etc/apt/sources.list.d/midokura.list"
+    curl -k http://repo.midonet.org/packages.midokura.key | sudo apt-key add -
+fi
+
 
 # add cloud archive for icehouse
 sudo apt-get install python-software-properties -y
